@@ -62,7 +62,7 @@ export class AuthService {
       { sub: existUser.id, role: [existUser.role] },
       {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: this.config.get<string>("ACCESS_TOKEN_TTL"),
+        expiresIn: this.config.get("ACCESS_TOKEN_TTL"),
       },
     );
 
@@ -73,7 +73,7 @@ export class AuthService {
       { sub: existUser.id, sessionId: sessionId },
       {
         secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: this.config.get<string>("REFRESH_TOKEN_TTL"),
+        expiresIn: this.config.get("REFRESH_TOKEN_TTL"),
       },
     );
 
@@ -175,7 +175,7 @@ export class AuthService {
       { sub: payload.sub, sessionId: payload.sessionId },
       {
         secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: this.config.get<string>("REFRESH_TOKEN_TTL"),
+        expiresIn: this.config.get("REFRESH_TOKEN_TTL"),
       },
     );
 
@@ -183,7 +183,7 @@ export class AuthService {
       { sub: payload.sub, role: [user.role] },
       {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: this.config.get<string>("ACCESS_TOKEN_TTL"),
+        expiresIn: this.config.get("ACCESS_TOKEN_TTL"),
       },
     );
 
