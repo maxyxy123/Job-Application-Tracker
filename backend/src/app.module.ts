@@ -5,6 +5,7 @@ import { AuthModule } from './module/auth/auth.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './module/prisma/prisma.module.js';
 import { EnvSchema } from './config/schema.env.js';
+import { JobApplicationModule } from './module/job-application/job-application.module.js';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -12,7 +13,7 @@ import { EnvSchema } from './config/schema.env.js';
     validate : (config) => {
       return EnvSchema.parse(config)
     }
-  }),AuthModule, PrismaModule],
+  }),AuthModule, PrismaModule, JobApplicationModule],
   controllers: [AppController],
   providers: [AppService],
 })
