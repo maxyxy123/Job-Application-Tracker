@@ -1,6 +1,6 @@
 import { Controller, Get ,Post ,Patch ,Delete, Req, Param, Body } from '@nestjs/common';
 import { JobApplicationService } from './job-application.service.js';
-import type { application, Request } from 'express';
+import type {  Request } from 'express';
 import { ApplicationDto, ApplicationUpdateInputDto } from '../../common/DTO/application.dto.js';
 
 @Controller('job-application')
