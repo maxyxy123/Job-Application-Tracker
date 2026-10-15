@@ -20,6 +20,8 @@ export class JwtAuthGuard implements CanActivate {
     private readonly prisma: PrismaService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log("GO IN AUTH_GUARD");
+    
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -52,6 +54,8 @@ export class JwtAuthGuard implements CanActivate {
       if(!user) throw new NotFoundException('USER NOT FOUND');
       
       request.user = { sub: payload.sub, role: [user.role] };
+      console.log("USER :",request.user);
+      
       return true;
   
     

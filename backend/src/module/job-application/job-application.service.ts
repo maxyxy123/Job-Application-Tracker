@@ -34,6 +34,7 @@ export class JobApplicationService {
     return application;
   }
 
+
   async createApplication(applicationInput: ApplicationDto, userId: string) {
     const createdApplication = await this.prisma.jobApplication.create({
       data: {
