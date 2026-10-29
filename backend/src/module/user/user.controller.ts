@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Req,
 } from '@nestjs/common';
 import { UserService } from './user.service.js';
@@ -12,14 +13,15 @@ import { PasswordDto } from '../../common/DTO/user.dto.js';
 import type { Request } from 'express';
 import { Roles } from '../auth/decorators/role-decorator.js';
 import { Role } from '../auth/types/role-type.js';
+import { PaginationDto } from '../../common/DTO/pagination.dto.js';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Roles([Role.ADMIN])
   @Get()
-  getAllUser() {
-    return this.userService.getAllUser();
+  getAllUser(@Query() query : PaginationDto) {
+    return this.userService.getAllUser(query);
   }
 
   @Roles([Role.ADMIN, Role.USER])
@@ -30,8 +32,8 @@ export class UserController {
 
   @Roles([Role.ADMIN])
   @Get(':userId/job-applications')
-  getUserApplications(@Param('userId') userId: string) {
-    return this.userService.getUserApplications(userId);
+  getUserApplications(@Param('userId') userId: string , @Query() query : PaginationDto) {
+    return this.userService.getUserApplications(userId,query);
   }
 
   @Roles([Role.USER])

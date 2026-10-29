@@ -4,12 +4,15 @@ import {
   ApplicationDto,
   ApplicationUpdateInputDto,
 } from '../../common/DTO/application.dto.js';
+import { PaginationDto } from '../../common/DTO/pagination.dto.js';
+import { calculateSkip } from '../../common/utils/calculateSkip.js';
 
 @Injectable()
 export class JobApplicationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllApplications(userId: string) {
+  async getAllApplications(userId: string, query: PaginationDto) {
+    const { skip, limit } = calculateSkip(query.page, query.limit);
     const jobApplications = await this.prisma.jobApplication.findMany({
       where: { userId: userId },
       include: {
@@ -19,6 +22,11 @@ export class JobApplicationService {
           },
         },
       },
+      skip: skip,
+      take: limit,
+      orderBy : {
+        createdAt : "asc"
+      }
     });
 
     return jobApplications;
@@ -33,7 +41,6 @@ export class JobApplicationService {
 
     return application;
   }
-
 
   async createApplication(applicationInput: ApplicationDto, userId: string) {
     const createdApplication = await this.prisma.jobApplication.create({
@@ -64,9 +71,9 @@ export class JobApplicationService {
 
         // userId : userId
       },
-      omit : {
-        userId : true
-      }
+      omit: {
+        userId: true,
+      },
     });
 
     return createdApplication;
@@ -77,14 +84,26 @@ export class JobApplicationService {
     applicationUpdateInput: ApplicationUpdateInputDto,
     userId: string,
   ) {
+    const {
+      company,
+      position,
+      location,
+      jobUrl,
+      salaryMin,
+      salaryMax,
+      currency,
+      notes,
+      status,
+      jobType,
+      appliedAt,
+      interviewAt,
+    } = applicationUpdateInput;
+    const existApplication = await this.prisma.jobApplication.findUnique({
+      where: { id: applicationId },
+    });
 
-    const {company , position , location, jobUrl, salaryMin,salaryMax ,currency,notes,status,jobType , appliedAt , interviewAt} = applicationUpdateInput
-  const existApplication = await this.prisma.jobApplication.findUnique({
-    where : {id : applicationId}
-  })
+    if (!existApplication) throw new NotFoundException('APPLICATION NOT EXIST');
 
-  if(!existApplication) throw new NotFoundException("APPLICATION NOT EXIST")
-  
     const updatedApplication = await this.prisma.jobApplication.update({
       where: { userId: userId, id: existApplication.id },
       data: {
@@ -99,29 +118,26 @@ export class JobApplicationService {
         status,
         jobType,
         appliedAt,
-        interviewAt
+        interviewAt,
       },
-      omit : {
-        userId : true
-      }
+      omit: {
+        userId: true,
+      },
     });
 
-    
-
-    return updatedApplication
+    return updatedApplication;
   }
 
-  async deleteApplication(applicationId : string , userId : string){
+  async deleteApplication(applicationId: string, userId: string) {
     const existApplication = await this.prisma.jobApplication.findUnique({
-      where : {id : applicationId,userId : userId}
-    })
-    if(!existApplication) throw new NotFoundException("APPLICATION NOT FOUND")
+      where: { id: applicationId, userId: userId },
+    });
+    if (!existApplication) throw new NotFoundException('APPLICATION NOT FOUND');
 
-      await this.prisma.jobApplication.delete({
-        where: {id : existApplication.id}
-      })
+    await this.prisma.jobApplication.delete({
+      where: { id: existApplication.id },
+    });
 
-      return "APPLICTION SUCCESSFULLY DELETED"
+    return 'APPLICTION SUCCESSFULLY DELETED';
   }
-
 }
