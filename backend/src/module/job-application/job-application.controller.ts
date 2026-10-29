@@ -7,6 +7,7 @@ import {
   Req,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
 import { JobApplicationService } from './job-application.service.js';
 import type { Request } from 'express';
@@ -16,6 +17,7 @@ import {
 } from '../../common/DTO/application.dto.js';
 import { Roles } from '../auth/decorators/role-decorator.js';
 import { Role } from '../auth/types/role-type.js';
+import { PaginationDto } from '../../common/DTO/pagination.dto.js';
 
 
 @Roles([Role.USER])
@@ -24,9 +26,9 @@ export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
   //User xem danh sách application của mình
   @Get()
-  getAllApplications(@Req() req: Request) {
+  getAllApplications(@Req() req: Request , @Query() query : PaginationDto) {
     const userId = req.user.sub as string;
-    return this.jobApplicationService.getAllApplications(userId);
+    return this.jobApplicationService.getAllApplications(userId,query);
   }
 
   //User xem chi tiết một application

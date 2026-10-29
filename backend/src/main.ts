@@ -4,12 +4,22 @@ import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptors } from './common/interceptors/reseponse-interceptor.js';
 import { HttpExceptionFilters } from './common/filters/htttp-exceptions.js';
 import cookieParser from 'cookie-parser' //must have de parse dc cookie
+import { VersioningType } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   //req.cookies.tenCookie phai co con doc lay dc cookie de validate
   app.use(cookieParser())
 
-  //validate input tu FE gui ve
+  //api versioning
+
+  app.setGlobalPrefix("api")
+
+  app.enableVersioning({
+    type : VersioningType.URI,
+    defaultVersion : "1"
+  })
+
+  //validate input tu FE gui ve 
   app.useGlobalPipes(new ValidationPipe({
     whitelist : true,
     transform : true,

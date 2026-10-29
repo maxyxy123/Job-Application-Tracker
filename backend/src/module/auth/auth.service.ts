@@ -62,7 +62,7 @@ export class AuthService {
       { sub: existUser.id, role: [existUser.role] },
       {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: this.config.get("ACCESS_TOKEN_TTL"),
+        expiresIn: this.config.get('ACCESS_TOKEN_TTL'),
       },
     );
 
@@ -73,7 +73,7 @@ export class AuthService {
       { sub: existUser.id, sessionId: sessionId },
       {
         secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: this.config.get("REFRESH_TOKEN_TTL"),
+        expiresIn: this.config.get('REFRESH_TOKEN_TTL'),
       },
     );
 
@@ -103,6 +103,8 @@ export class AuthService {
     };
   }
 
+  
+
   async logout(refresh_token: string) {
     let payload: { sessionId: string };
     try {
@@ -121,11 +123,12 @@ export class AuthService {
       throw new UnauthorizedException('SESSION IS NOT VALID');
     }
 
+    //check xem session bi thu hoi hay chua
     if (session.revokedAt === null) {
       await this.prisma.session.update({
         where: { id: session.id },
         data: {
-          revokedAt: new Date(),
+          revokedAt: new Date(), // thu hoi tai thoi diem nay
         },
       });
     }
@@ -148,8 +151,9 @@ export class AuthService {
 
     if (!session)
       throw new UnauthorizedException('SESSION IS INVALID OR EXPIRED');
-   
-    if(payload.sub !== session.userId) throw new UnauthorizedException("SESSION IS INVALID")
+
+    if (payload.sub !== session.userId)
+      throw new UnauthorizedException('SESSION IS INVALID');
 
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
@@ -175,7 +179,7 @@ export class AuthService {
       { sub: payload.sub, sessionId: payload.sessionId },
       {
         secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-        expiresIn: this.config.get("REFRESH_TOKEN_TTL"),
+        expiresIn: this.config.get('REFRESH_TOKEN_TTL'),
       },
     );
 
@@ -183,7 +187,7 @@ export class AuthService {
       { sub: payload.sub, role: [user.role] },
       {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: this.config.get("ACCESS_TOKEN_TTL"),
+        expiresIn: this.config.get('ACCESS_TOKEN_TTL'),
       },
     );
 
